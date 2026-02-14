@@ -52,4 +52,7 @@ app.listen(PORT, () => {
   console.log(`📝 Mode: ${process.env.NODE_ENV}`);
 });
 // Routes
+app.use('/api/bookings', require('./routes/bookings'));  // ← AJOUTER
+app.use('/api/services', require('./routes/services'));
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/establishments', require('./routes/establishments'));  // ← AJOUTER CETTE LIGNE
