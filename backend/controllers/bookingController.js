@@ -1,12 +1,19 @@
 const Booking = require('../models/Booking');
 const Service = require('../models/Service');
 const Establishment = require('../models/Establishment');
-
+const { 
+  sendBookingConfirmation, 
+  sendNewBookingNotification,
+  sendBookingCancellation 
+} = require('../utils/email');
 // @desc    Créer une réservation
 // @route   POST /api/bookings
 // @access  Private (Cliente)
 exports.createBooking = async (req, res) => {
+
+
   try {
+    
     const { establishment, services, date, startTime, endTime, notes } = req.body;
 
     // Vérifier que l'établissement existe
@@ -73,7 +80,22 @@ exports.createBooking = async (req, res) => {
       .populate('client', 'firstName lastName email phone')
       .populate('establishment', 'name address contact')
       .populate('services.service', 'name duration');
+try {
+  await sendBookingConfirmation(
+    populatedBooking,
+    populatedBooking.client,
+    populatedBooking.establishment
+  );
 
+  await sendNewBookingNotification(
+    populatedBooking,
+    populatedBooking.establishment,
+    populatedBooking.client
+  );
+} catch (emailError) {
+  console.error('❌ Erreur envoi emails:', emailError.message);
+  // Ne pas bloquer la création de réservation si email échoue
+}
     res.status(201).json({
       success: true,
       message: 'Réservation créée avec succès',
@@ -320,7 +342,16 @@ exports.cancelBooking = async (req, res) => {
     booking.status = 'cancelled';
     booking.cancellationReason = req.body.reason || 'Non spécifiée';
     await booking.save();
-
+try {
+  await sendBookingCancellation(
+    booking,
+    await User.findById(booking.client),
+    establishment,
+    booking.cancellationReason
+  );
+} catch (emailError) {
+  console.error('❌ Erreur envoi email annulation:', emailError.message);
+}
     res.status(200).json({
       success: true,
       message: 'Réservation annulée',

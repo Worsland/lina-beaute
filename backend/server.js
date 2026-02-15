@@ -2,7 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/database');
-
+const { startSchedulers } = require('./utils/scheduler');
 // Charger les variables d'environnement
 dotenv.config();
 
@@ -29,13 +29,6 @@ app.get('/', (req, res) => {
   });
 });
 
-// Routes (à ajouter plus tard)
-// app.use('/api/auth', require('./routes/auth'));
-// app.use('/api/establishments', require('./routes/establishments'));
-// app.use('/api/bookings', require('./routes/bookings'));
-// app.use('/api/ai', require('./routes/ai'));
-
-// Gestion des erreurs
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ 
@@ -56,3 +49,5 @@ app.use('/api/bookings', require('./routes/bookings'));  // ← AJOUTER
 app.use('/api/services', require('./routes/services'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/establishments', require('./routes/establishments'));  // ← AJOUTER CETTE LIGNE
+app.use('/api/ai', require('./routes/ai'));  // ← AJOUTER CETTE LIGNE
+app.use('/api/reviews', require('./routes/reviews'));  // ← ET CELLE-CI SI PAS DÉJÀ LÀ

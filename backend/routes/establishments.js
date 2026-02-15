@@ -7,15 +7,20 @@ const {
   updateEstablishment,
   deleteEstablishment,
   getNearbyEstablishments,
-  getMyEstablishment
+  getMyEstablishment,
+  advancedGeoSearch,           // ← AJOUTER
+  getEstablishmentsWithinRadius, // ← AJOUTER
+  getEstablishmentsWithinArea   // ← AJOUTER
 } = require('../controllers/establishmentController');
-const { protect, authorize } = require('../middleware/auth');
+const { protect} = require('../middleware/auth');
 
 // Routes publiques
 router.get('/', getEstablishments);
 router.get('/nearby', getNearbyEstablishments);
 router.get('/:id', getEstablishmentById);
-
+router.post('/search-nearby', advancedGeoSearch);          // ← AJOUTER
+router.get('/within-radius', getEstablishmentsWithinRadius); // ← AJOUTER
+router.post('/within-area', getEstablishmentsWithinArea);  
 // Routes privées (nécessitent authentification)
 router.post('/', protect, createEstablishment);
 router.get('/me/establishment', protect, getMyEstablishment);
