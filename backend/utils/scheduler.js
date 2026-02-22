@@ -2,7 +2,7 @@ const cron = require('node-cron');
 const Booking = require('../models/Booking');
 const User = require('../models/User');
 const Establishment = require('../models/Establishment');
-const { sendBookingReminder } = require('./email');
+//const { sendBookingReminder } = require('./email');
 
 /**
  * Tâche CRON pour les rappels 24h avant
@@ -36,12 +36,12 @@ const reminder24Hours = cron.schedule('0 10 * * *', async () => {
 
     for (const booking of bookings) {
       try {
-        await sendBookingReminder(
+       /* await sendBookingReminder(
           booking,
           booking.client,
           booking.establishment,
           24
-        );
+        );*/
 
         // Marquer le rappel comme envoyé
         booking.reminderSent = true;
@@ -98,12 +98,12 @@ const reminder2Hours = cron.schedule('0 * * * *', async () => {
 
         // Si entre 1.5h et 2.5h avant (pour éviter les doublons)
         if (hoursUntilBooking >= 1.5 && hoursUntilBooking <= 2.5) {
-          await sendBookingReminder(
+        /*  await sendBookingReminder(
             booking,
             booking.client,
             booking.establishment,
             2
-          );
+          );*/
 
           sentCount++;
           console.log(`✅ Rappel 2h envoyé pour booking ${booking._id}`);
